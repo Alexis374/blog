@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "alexis-notes",
+  "compatibility_date": "2026-10-17",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "blog.diaodaquan.dpdns.org", "custom_domain": true }
+  ]
+}
