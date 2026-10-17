@@ -4,7 +4,7 @@ Personal blog by alexis, based on [AstroPaper](https://github.com/satnaing/astro
 
 ## Local development
 
-Requires Node.js 22.12+ and pnpm.
+Requires Node.js 22.12+ and pnpm. Cloudflare builds use Node 24.18.0 (`.node-version`) and pnpm 11.24.0 (`packageManager` in `package.json`).
 
 ```sh
 pnpm install --frozen-lockfile
@@ -28,16 +28,30 @@ Hello world!
 
 See `src/content.config.ts` for the complete frontmatter schema. Edit `src/content/pages/about.md` for the About page and `astro-paper.config.ts` for site metadata and features.
 
-## Deploy
+## Publish: Git push → Cloudflare Workers Builds
+
+After writing a post, **do not build locally**. Commit and push the source to `main`; the connected Cloudflare pipeline builds and deploys it:
 
 ```sh
-pnpm deploy
+git add src/content/posts/
+git commit -m "Publish new post"
+git push origin main
 ```
 
-`pnpm deploy` runs the Astro build, Pagefind indexing, and Wrangler deployment. Wrangler authentication is required (`pnpm exec wrangler login`). The Worker, static asset directory, and custom domain are configured in `wrangler.jsonc`. The DNS zone must be managed in the Cloudflare account used for deployment.
+The remote is HTTPS; if GitHub HTTPS authentication is not configured but your SSH key is authorized, push without changing the saved remote URL using `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main`.
 
-The font files in `src/assets/fonts/` are bundled locally, so the build does not require access to Google Fonts. Their license is in `src/assets/fonts/OFL.txt`.
+Connect the **existing** Worker `alexis-notes` (do not create a second Worker) to <https://github.com/Alexis374/blog> in Cloudflare **Workers & Pages → alexis-notes → Settings → Builds → Connect**. Configure:
 
-## GitHub
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Root directory | `/` (repository root) |
+| Build command | leave empty (as in `bill-admin`) |
+| Deploy command | `pnpm deploy` |
+| Build variable, if the image does not use `packageManager` | `PNPM_VERSION=11.24.0` |
 
-Repository: <https://github.com/Alexis374/blog>. Push changes with `git push origin main`.
+Cloudflare auto-installs dependencies and then `pnpm deploy` performs Astro type-check/build, Pagefind indexing and `wrangler deploy` on Cloudflare's builder. `wrangler.jsonc` keeps the existing Worker name, `dist` static assets and custom domain. Do not configure `pnpm exec wrangler deploy` *without* a prior build: `dist/` is Git-ignored and does not exist in a fresh checkout. Monitor build history in the Worker's **Deployments** tab; a failed build does not publish the new article.
+
+`pnpm deploy` can still be used manually for troubleshooting, but is **not** the normal publishing flow. Google Sans Code fonts are bundled in `src/assets/fonts/`, so builds do not need to access Google Fonts; the license is in `src/assets/fonts/OFL.txt`.
+
+Repository: <https://github.com/Alexis374/blog>.

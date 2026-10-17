@@ -1,8 +1,9 @@
 # build output
 dist/
 
-# generated types
+# generated types and local Wrangler state
 .astro/
+.wrangler/
 
 # dependencies
 node_modules/
