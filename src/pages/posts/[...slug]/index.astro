@@ -160,6 +160,28 @@ const ogImage = ogImageUrl
     <hr class="my-8 border-dashed" />
 
     <AdjacentPostNav {prevPost} {nextPost} />
+
+    <section aria-labelledby="comments-heading" class="my-8">
+      <h2 id="comments-heading" class="mb-4 text-xl font-semibold">评论</h2>
+      <script
+        is:inline
+        data-astro-rerun
+        src="https://giscus.app/client.js"
+        data-repo="Alexis374/blog"
+        data-repo-id="R_kgDOVNbOHA"
+        data-category="General"
+        data-category-id="DIC_kwDOVNbOHM4DI216"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async></script>
+    </section>
   </main>
   <Footer />
 </PostLayout>
